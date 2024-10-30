@@ -14,29 +14,35 @@
   <div id="app">
     <div class="nav-bar"></div>
 
+    <div class="cart">Cart ({{ cart }})</div>
+
     <div class="product-display">
       <div class="product-container">
         <div class="product-image">
           <a :href="url">
-            <img :src="image">
+            <img :src="image" :class="{'out-of-stock-img': !inStock}">
           </a>
         </div>
         <div class="product-info">
-          <h1>{{ product }}</h1>
-          <p v-show="onSale">ON SALE!!!</p>
+          <h1>{{ title }}</h1>
+          <p v-show="onSale">{{brand}} {{product}} is on sale.</p>
           <p>{{description}}</p>
           <ul>
             <li v-for="detail in details">{{detail}}</li>
           </ul>
-          <div v-for="variant in variants" :key="variant.id">{{ variant.color }}</div>
+          <div v-for="(variant, index) in variants" :key="variant.id" @mouseover="updateVariant(index)"
+            class="color-circle" :class="{ active: activeClass }" :style="{backgroundColor: variant.color}">
+          </div>
           <ul>
             <li v-for="(size, index) in sizes" :key="index">{{size}}</li>
           </ul>
           <br>
           <p v-if="inventory > 10">In Stock</p>
           <p v-else-if="inventory <=10 && inventory > 0">Almost sold out!</p>
-          <p v-else>Out of Stock</p>
-          <button class="button">Add to Cart</button>
+          <p v-else-if="!inStock">Out of Stock</p>
+          <button class="button" :class="{disabledButton: !inStock}" :disabled="!inStock" @click="addToCart">Add to
+            Cart</button>
+          <button class="button" @click="removeFromCart">Remove Item</button>
         </div>
       </div>
     </div>
